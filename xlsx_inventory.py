@@ -6,6 +6,8 @@ import configparser
 from openpyxl import load_workbook
 from openpyxl.utils import coordinate_from_string, column_index_from_string
 
+import six
+
 config_file = 'xlsx_inventory.cfg'
 default_group = 'NO_GROUP'
 
@@ -37,7 +39,7 @@ def main():
             except KeyError as e:
                 print('\033[91mHost "%s" not Found!\033[0m' % e)
                 print(e)
-    except FileNotFoundError as e:
+    except IOError as e:
         print(
             '\033[91mFile Not Found! Check %s configuration file!'
             ' Is the `xlsx_inventory_file` path setting correct?\033[0m' % config_file)
@@ -92,9 +94,9 @@ def parse_args():
 
 
 def sheet_to_inventory(group_by_col, hostname_col, sheet):
-    if type(group_by_col) is str:
+    if isinstance(group_by_col, six.string_types):
         group_by_col = column_index_from_string(coordinate_from_string(group_by_col + '1')[0]) - 1
-    if type(hostname_col) is str:
+    if isinstance(hostname_col, six.string_types):
         hostname_col = column_index_from_string(coordinate_from_string(hostname_col + '1')[0]) - 1
 
     groups = {
